@@ -87,6 +87,10 @@ model GlobalVendors {
   riskAssessmentVersion   String?
   riskAssessmentUpdatedAt DateTime?
 
+  // Policy analysis data (ported from AI-Policy-Terms-Analyzer)
+  policyAnalysisData      Json?
+  policyAnalysisUpdatedAt DateTime?
+
   approved  Boolean  @default(false)
   createdAt DateTime @default(now())
 

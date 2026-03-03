@@ -1,7 +1,8 @@
 import { researchJobCore } from '@/trigger/lib/research';
 import { db } from '@db';
-import { schemaTask } from '@trigger.dev/sdk';
+import { schemaTask, tasks } from '@trigger.dev/sdk';
 import { z } from 'zod';
+import type { analyzeVendorPolicy } from './analyze-policy';
 
 const firecrawlDataSchema = z.object({
   company_name: z.string().optional().nullable(),
@@ -123,6 +124,14 @@ export const researchVendor = schemaTask({
             trust_page_url: data.trust_portal_url,
           },
         });
+
+        // Trigger policy analysis if a policy URL was found
+        const policyUrl = data.privacy_policy_url || data.terms_of_service_url;
+        if (policyUrl) {
+          await tasks.trigger<typeof analyzeVendorPolicy>('analyze-vendor-policy', {
+            website: payload.website,
+          });
+        }
       },
     });
   },
